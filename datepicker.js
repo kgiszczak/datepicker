@@ -96,7 +96,9 @@
   // \\ - escape proceeding characters
   // [] - escape characters between braces
   // anything else - literal text
-  function formatDate(format, date, options) {
+  function formatDate(format, date, option) {
+    var options = $.extend({}, DEFAULTS, option);
+
     var i, value, token,
         tokens = format.match(formattingTokens),
         output = '';
@@ -116,7 +118,9 @@
     return output;
   }
 
-  function parseDate(format, string, options) {
+  function parseDate(format, string, option) {
+    var options = $.extend({}, DEFAULTS, option);
+
     var dateObject = {}, i, token, regex, matched;
 
     function addPartToDateObject(token, matched) {
@@ -419,6 +423,12 @@
       }
       if (typeof option === 'string') data[option](val);
     });
+  };
+
+  // expose helper functions
+  $.datepicker = {
+    formatDate: formatDate,
+    parseDate: parseDate
   };
 
   $(document).on('click', function(e) {
