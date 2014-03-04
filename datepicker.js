@@ -213,33 +213,10 @@
 
     this.currentDate = this.selectedDate;
 
-    this.$container.html(renderCalendar.call(this));
+    render.call(this);
     $(document.body).append(this.$container);
 
-    var cWidth = this.$container.outerWidth();
-    var cHeight = this.$container.outerHeight();
-
-    var offset = this.$element.offset();
-    var height = this.$element.outerHeight();
-    var width = this.$element.outerWidth();
-
-    var top = offset.top;
-    var left = offset.left;
-
-    var align = this.options.align.split('-');
-
-    if (align[0] === 'bottom') top += height;
-    if (align[0] === 'top')    top -= cHeight;
-    if (align[0] === 'left')   left -= cWidth;
-    if (align[0] === 'right')  left += width;
-
-    if (align[1] === 'center') left += width / 2 - cWidth / 2;
-    if (align[1] === 'right')  left += width - cWidth;
-
-    if (align[1] === 'top')    top -= cHeight - height;
-    if (align[1] === 'middle') top -= cHeight / 2 - height / 2;
-
-    this.$container.css({left: left, top: top});
+    positionContainer.call(this);
   };
 
   Datepicker.prototype.hide = function() {
@@ -284,6 +261,37 @@
     this.$container.html(renderCalendar.call(this));
     this.val(this.selectedDate);
     this.hide();
+  }
+
+  function render() {
+    this.$container.html(renderCalendar.call(this));
+  }
+
+  function positionContainer() {
+    var cWidth = this.$container.outerWidth();
+    var cHeight = this.$container.outerHeight();
+
+    var offset = this.$element.offset();
+    var height = this.$element.outerHeight();
+    var width = this.$element.outerWidth();
+
+    var top = offset.top;
+    var left = offset.left;
+
+    var align = this.options.align.split('-');
+
+    if (align[0] === 'bottom') top += height;
+    if (align[0] === 'top')    top -= cHeight;
+    if (align[0] === 'left')   left -= cWidth;
+    if (align[0] === 'right')  left += width;
+
+    if (align[1] === 'center') left += width / 2 - cWidth / 2;
+    if (align[1] === 'right')  left += width - cWidth;
+
+    if (align[1] === 'top')    top -= cHeight - height;
+    if (align[1] === 'middle') top -= cHeight / 2 - height / 2;
+
+    this.$container.css({left: left, top: top});
   }
 
   function renderCalendar() {
