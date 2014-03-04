@@ -238,6 +238,16 @@
     }
   }
 
+  Datepicker.prototype.getDate = function() {
+    return this.selectedDate;
+  };
+
+  Datepicker.prototype.setDate = function(date) {
+    this.selectedDate = this.currentDate = date;
+    render.call(this);
+    this.val(this.selectedDate);
+  };
+
   // DATEPICKER PRIVATE FUNCTIONS DEFINITION
   // =======================================
 
@@ -386,7 +396,15 @@
   // DATEPICKER PLUGIN DEFINITION
   // ============================
 
-  $.fn.datepicker = function(option) {
+  $.fn.datepicker = function(option, val) {
+    if (option === 'getDate') {
+      var $this = $(this[0]);
+      $this.datepicker();
+      var data = $this.data('datepicker');
+
+      return data[option](val);
+    }
+
     return this.each(function() {
       var $this   = $(this);
       var data    = $this.data('datepicker');
@@ -397,7 +415,7 @@
           .data('datepicker', (data = new Datepicker(this, options)))
           .attr('data-datepicker-active', '');
       }
-      if (typeof option === 'string') data[option]();
+      if (typeof option === 'string') data[option](val);
     });
   };
 
