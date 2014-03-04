@@ -213,7 +213,7 @@
 
     this.currentDate = this.selectedDate;
 
-    render.call(this);
+    this.render();
     $(document.body).append(this.$container);
 
     positionContainer.call(this);
@@ -221,6 +221,10 @@
 
   Datepicker.prototype.hide = function() {
     this.$container.detach();
+  }
+
+  Datepicker.prototype.render = function() {
+    this.$container.html(renderCalendar.call(this));
   }
 
   Datepicker.prototype.val = function(val) {
@@ -244,7 +248,7 @@
 
   Datepicker.prototype.setDate = function(date) {
     this.selectedDate = this.currentDate = date;
-    render.call(this);
+    this.render();
     this.val(this.selectedDate);
   };
 
@@ -271,10 +275,6 @@
     this.$container.html(renderCalendar.call(this));
     this.val(this.selectedDate);
     this.hide();
-  }
-
-  function render() {
-    this.$container.html(renderCalendar.call(this));
   }
 
   function positionContainer() {
