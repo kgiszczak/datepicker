@@ -258,6 +258,10 @@
     this.val(this.selectedDate);
   };
 
+  Datepicker.prototype.setOptions = function(options) {
+    this.options = $.extend({}, this.options, options);
+  };
+
   // DATEPICKER PRIVATE FUNCTIONS DEFINITION
   // =======================================
 
@@ -428,7 +432,11 @@
   // expose helper functions
   $.datepicker = {
     formatDate: formatDate,
-    parseDate: parseDate
+    parseDate: parseDate,
+    setDefaults: function(options) {
+      $.extend(DEFAULTS, options);
+      $('[data-datepicker-active]').datepicker('setOptions', options);
+    }
   };
 
   $(document).on('click', function(e) {
