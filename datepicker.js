@@ -13,7 +13,7 @@
     altField: null,
     dateFormat: 'mm/dd/yy',
     altFormat: null,
-    position: 'bottom'
+    align: 'bottom-left'
   };
 
   var regextOneOrTwoDigit = /\d\d?/;
@@ -213,13 +213,33 @@
 
     this.currentDate = this.selectedDate;
 
+    this.$container.html(renderCalendar.call(this));
+    $(document.body).append(this.$container);
+
+    var cWidth = this.$container.outerWidth();
+    var cHeight = this.$container.outerHeight();
+
     var offset = this.$element.offset();
     var height = this.$element.outerHeight();
+    var width = this.$element.outerWidth();
 
-    this.$container.html(renderCalendar.call(this));
+    var top = offset.top;
+    var left = offset.left;
 
-    this.$container.css({left: offset.left, top: offset.top + height});
-    $(document.body).append(this.$container);
+    var align = this.options.align.split('-');
+
+    if (align[0] === 'bottom') top += height;
+    if (align[0] === 'top')    top -= cHeight;
+    if (align[0] === 'left')   left -= cWidth;
+    if (align[0] === 'right')  left += width;
+
+    if (align[1] === 'center') left += width / 2 - cWidth / 2;
+    if (align[1] === 'right')  left += width - cWidth;
+
+    if (align[1] === 'top')    top -= cHeight - height;
+    if (align[1] === 'middle') top -= cHeight / 2 - height / 2;
+
+    this.$container.css({left: left, top: top});
   };
 
   Datepicker.prototype.hide = function() {
