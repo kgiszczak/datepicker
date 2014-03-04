@@ -279,10 +279,16 @@
 
   function changeMonth(e) {
     e.preventDefault();
-    var dateString = $(e.target).data('date');
-    this.currentDate = parseDate('yy-m-d', dateString, this.options);
 
-    this.$container.html(renderCalendar.call(this));
+    var dateString = $(e.target).data('date');
+    var date = parseDate('yy-m-d', dateString, this.options);
+
+    var ev = $.Event('changeMonth.datepicker', {selectedDate: date});
+    this.$element.trigger(ev);
+    if (!ev.isDefaultPrevented()) {
+      this.currentDate = date;
+      this.$container.html(renderCalendar.call(this));
+    }
   }
 
   function select(e) {
