@@ -215,6 +215,10 @@
   Datepicker.prototype.show = function(e) {
     if (e) e.preventDefault();
 
+    var ev = $.Event('show.datepicker');
+    this.$element.trigger(ev);
+    if (ev.isDefaultPrevented()) return;
+
     this.currentDate = this.selectedDate;
 
     this.render();
@@ -224,6 +228,10 @@
   };
 
   Datepicker.prototype.hide = function() {
+    var ev = $.Event('hide.datepicker');
+    this.$element.trigger(ev);
+    if (ev.isDefaultPrevented()) return;
+
     this.$container.detach();
   }
 
@@ -279,11 +287,19 @@
 
   function select(e) {
     e.preventDefault();
-    var dateString = $(e.target).data('date');
-    this.selectedDate = parseDate('yy-m-d', dateString, this.options);
 
-    this.$container.html(renderCalendar.call(this));
-    this.val(this.selectedDate);
+    var dateString = $(e.target).data('date');
+    var date = parseDate('yy-m-d', dateString, this.options);
+
+    var ev = $.Event('select.datepicker', {selectedDate: date});
+    this.$element.triggerHandler(ev);
+    if (!ev.isDefaultPrevented()) {
+      this.selectedDate = date;
+
+      this.$container.html(renderCalendar.call(this));
+      this.val(this.selectedDate);
+    }
+
     this.hide();
   }
 
