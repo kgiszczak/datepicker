@@ -396,15 +396,17 @@
         if (cell < firstDayOffset) {
           rYear = prevDate.getFullYear();
           rMonth = prevDate.getMonth();
-          classes.push('prev-month');
           day = prevDaysCount - firstDayOffset + j + 1;
+          classes.push('prev-month');
           isCellSelectable = this.options.selectOtherMonths;
+          if (!isCellSelectable) classes.push('disabled');
         } else if (cell >= offsetDaysCount) {
           rYear = nextDate.getFullYear();
           rMonth = nextDate.getMonth();
-          classes.push('next-month');
           day = cell - offsetDaysCount + 1;
+          classes.push('next-month');
           isCellSelectable = this.options.selectOtherMonths;
+          if (!isCellSelectable) classes.push('disabled');
         } else {
           rYear = year;
           rMonth = month;
