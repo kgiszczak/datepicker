@@ -14,7 +14,9 @@
     dateFormat: 'mm/dd/yy',
     altFormat: null,
     align: 'bottom-left',
-    selectOtherMonths: true
+    selectOtherMonths: true,
+    prevText: '&laquo;',
+    nextText: '&raquo;'
   };
 
   var regextOneOrTwoDigit = /\d\d?/;
@@ -358,12 +360,14 @@
         offsetDaysCount = firstDayOffset + daysCount,
         rows            = Math.ceil(offsetDaysCount / 7, 10);
 
+    var dataDateFormat = '\\data-\\date="yy-m-d"';
+
     var output = '';
 
     output += '<div class="datepicker-header">';
-    output += '<a class="prev-link" data-date="' + prevDate.getFullYear() + '-' + (prevDate.getMonth() + 1) + '-1">&laquo;</a>';
+    output += '<a class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>' + this.options.prevText + '</a>';
     output += '<span class="datepicker-title">' + formatDate('MM yy', this.currentDate, this.options) + '</span>';
-    output += '<a class="next-link" data-date="' + nextDate.getFullYear() + '-' + (nextDate.getMonth() + 1) + '-1">&raquo;</a>';
+    output += '<a class="next-link"' + formatDate(dataDateFormat, nextDate) + '>' + this.options.nextText + '</a>';
     output += '</div>';
 
     output += '<table>';
