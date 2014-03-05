@@ -13,7 +13,8 @@
     altField: null,
     dateFormat: 'mm/dd/yy',
     altFormat: null,
-    align: 'bottom-left'
+    align: 'bottom-left',
+    selectOtherMonths: true
   };
 
   var regextOneOrTwoDigit = /\d\d?/;
@@ -337,7 +338,7 @@
   }
 
   function renderCalendar() {
-    var i, j, cell, day, classes, rYear, rMonth;
+    var i, j, cell, day, classes, rYear, rMonth, isCellSelectable;
 
     var today  = new Date,
         tYear  = today.getFullYear(),
@@ -393,26 +394,29 @@
           rMonth = prevDate.getMonth();
           classes.push('prev-month');
           day = prevDaysCount - firstDayOffset + j + 1;
+          isCellSelectable = this.options.selectOtherMonths;
         } else if (cell >= offsetDaysCount) {
           rYear = nextDate.getFullYear();
           rMonth = nextDate.getMonth();
           classes.push('next-month');
           day = cell - offsetDaysCount + 1;
+          isCellSelectable = this.options.selectOtherMonths;
         } else {
           rYear = year;
           rMonth = month;
           day = cell - firstDayOffset + 1;
           if (year === tYear && month === tMonth && day === tDay) classes.push('today');
+          isCellSelectable = true;
         }
 
         if (sYear === rYear && sMonth === rMonth && sDay === day) classes.push('selected');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
-        output += '<a data-date="' + rYear + '-' + (rMonth + 1) + '-' + day + '">';
+        output += isCellSelectable ? '<a data-date="' + rYear + '-' + (rMonth + 1) + '-' + day + '">' : '<span>';
 
         output += day;
 
-        output += '</a>';
+        output += isCellSelectable ? '</a>' : '</span>';
         output += '</td>';
       }
 
