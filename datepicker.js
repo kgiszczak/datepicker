@@ -358,7 +358,7 @@
         prevDaysCount   = 32 - (new Date(year, month - 1, 32)).getDate(),
         firstDayOffset  = (new Date(year, month, 1)).getDay() - this.options.firstDay,
         offsetDaysCount = firstDayOffset + daysCount,
-        rows            = Math.ceil(offsetDaysCount / 7, 10);
+        rows            = Math.ceil(offsetDaysCount / 7);
 
     var dataDateFormat = '\\data-\\date="yy-m-d"';
 
