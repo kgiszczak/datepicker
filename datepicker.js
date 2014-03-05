@@ -445,7 +445,7 @@
       if (!data) {
         $this
           .data('datepicker', (data = new Datepicker(this, options)))
-          .attr('data-datepicker-active', '');
+          .attr('data-datepicker-instance', '');
       }
       if (typeof option === 'string') data[option](val);
     });
@@ -457,12 +457,12 @@
     parseDate: parseDate,
     setDefaults: function(options) {
       $.extend(DEFAULTS, options);
-      $('[data-datepicker-active]').datepicker('setOptions', options);
+      $('[data-datepicker-instance]').datepicker('setOptions', options);
     }
   };
 
   $(document).on('click', function(e) {
-    $('[data-datepicker-active]').each(function() {
+    $('[data-datepicker-instance]').each(function() {
       if (this !== e.target) $(this).datepicker('hide');
     });
   });
