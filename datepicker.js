@@ -16,7 +16,8 @@
     align: 'bottom-left',
     selectOtherMonths: true,
     prevText: '&laquo;',
-    nextText: '&raquo;'
+    nextText: '&raquo;',
+    dayFormat: 'd'
   };
 
   var regextOneOrTwoDigit = /\d\d?/;
@@ -184,7 +185,8 @@
 
     this.isInput = this.$element.is('input');
 
-    this.selectedDate = new Date;
+    var now = new Date;
+    this.selectedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     var defaultDate = this.options.defaultDate;
     if (typeof defaultDate === 'string') {
@@ -340,15 +342,12 @@
   }
 
   function renderCalendar() {
-    var i, j, cell, day, classes, rYear, rMonth, isCellSelectable;
+    var i, j, cell, day, classes, cYear, cMonth, cDate, isCellSelectable;
 
     var today  = new Date,
         tYear  = today.getFullYear(),
         tMonth = today.getMonth(),
-        tDay   = today.getDate(),
-        sYear  = this.selectedDate.getFullYear(),
-        sMonth = this.selectedDate.getMonth(),
-        sDay   = this.selectedDate.getDate();
+        tDay   = today.getDate();
 
     var year            = this.currentDate.getFullYear(),
         month           = this.currentDate.getMonth(),
@@ -394,33 +393,34 @@
 
         cell = i * 7 + j;
         if (cell < firstDayOffset) {
-          rYear = prevDate.getFullYear();
-          rMonth = prevDate.getMonth();
+          cYear = prevDate.getFullYear();
+          cMonth = prevDate.getMonth();
           day = prevDaysCount - firstDayOffset + j + 1;
           classes.push('prev-month');
           isCellSelectable = this.options.selectOtherMonths;
-          if (!isCellSelectable) classes.push('disabled');
         } else if (cell >= offsetDaysCount) {
-          rYear = nextDate.getFullYear();
-          rMonth = nextDate.getMonth();
+          cYear = nextDate.getFullYear();
+          cMonth = nextDate.getMonth();
           day = cell - offsetDaysCount + 1;
           classes.push('next-month');
           isCellSelectable = this.options.selectOtherMonths;
-          if (!isCellSelectable) classes.push('disabled');
         } else {
-          rYear = year;
-          rMonth = month;
+          cYear = year;
+          cMonth = month;
           day = cell - firstDayOffset + 1;
           if (year === tYear && month === tMonth && day === tDay) classes.push('today');
           isCellSelectable = true;
         }
 
-        if (sYear === rYear && sMonth === rMonth && sDay === day) classes.push('selected');
+        cDate = new Date(cYear, cMonth, day);
+
+        if (!isCellSelectable) classes.push('disabled');
+        if (this.selectedDate - cDate === 0) classes.push('selected');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
-        output += isCellSelectable ? '<a data-date="' + rYear + '-' + (rMonth + 1) + '-' + day + '">' : '<span>';
+        output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, cDate) + '>' : '<span>';
 
-        output += day;
+        output += formatDate(this.options.dayFormat, cDate, this.options);
 
         output += isCellSelectable ? '</a>' : '</span>';
         output += '</td>';
