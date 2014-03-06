@@ -17,7 +17,9 @@
     selectOtherMonths: true,
     prevText: '&laquo;',
     nextText: '&raquo;',
-    dayFormat: 'd'
+    dayFormat: 'd',
+    minDate: null,
+    maxDate: null
   };
 
   var regextOneOrTwoDigit = /\d\d?/;
@@ -47,6 +49,28 @@
 
   function datePart(d) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  function dateFromOption(val, options) {
+    if (!val) return null;
+
+    var date = null;
+
+    if (typeof val === 'number') {
+      date = datePart(new Date);
+      date.setDate(date.getDate() + val);
+    } else if (typeof val === 'string') {
+      try {
+        date = parseDate(options.dateFormat, val, options);
+      } catch(e) {
+        date = datePart(new Date);
+        date.setDate(date.getDate() + +val);
+      }
+    } else {
+      date = val;
+    }
+
+    return date;
   }
 
   function formatNumber(number) {
@@ -216,7 +240,7 @@
 
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
-      .on('click', '.prev-link, .next-link', $.proxy(changeMonth, this))
+      .on('click', 'a.prev-link, a.next-link', $.proxy(changeMonth, this))
       .on('click', 'table a', $.proxy(select, this));
   };
 
@@ -358,14 +382,24 @@
         offsetDaysCount = firstDayOffset + daysCount,
         rows            = Math.ceil(offsetDaysCount / 7);
 
+    var minDate = dateFromOption(this.options.minDate, this.options);
+    var maxDate = dateFromOption(this.options.maxDate, this.options);
+
     var dataDateFormat = '\\data-\\date="yy-m-d"';
+
+    var prevDisabled = minDate && minDate > prevDate,
+        nextDisabled = maxDate && maxDate < nextDate;
 
     var output = '';
 
     output += '<div class="datepicker-header">';
-    output += '<a class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>' + this.options.prevText + '</a>';
+    output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
+    output += this.options.prevText;
+    output += '</' + (prevDisabled ? 'span' : 'a') + '>';
     output += '<span class="datepicker-title">' + formatDate('MM yy', this.currentDate, this.options) + '</span>';
-    output += '<a class="next-link"' + formatDate(dataDateFormat, nextDate) + '>' + this.options.nextText + '</a>';
+    output += '<' + (nextDisabled ? 'span' : 'a') + ' class="next-link"' + formatDate(dataDateFormat, nextDate) + '>';
+    output += this.options.nextText;
+    output += '</' + (nextDisabled ? 'span' : 'a') + '>';
     output += '</div>';
 
     output += '<table>';
@@ -403,6 +437,9 @@
           classes.push('next-month');
           isCellSelectable = this.options.selectOtherMonths;
         }
+
+        if (minDate && minDate > day) isCellSelectable = false;
+        if (maxDate && maxDate < day) isCellSelectable = false;
 
         if (!isCellSelectable) classes.push('disabled');
         if (today - day === 0) classes.push('today');
