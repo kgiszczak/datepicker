@@ -172,10 +172,10 @@
           dateObject.year = +matched;
           break;
         case 'M':
-          dateObject.month = options.monthsShort.findIndex(function(el) { return el === matched });
+          dateObject.month = options.monthsShort.findIndex(function(el) { return el === matched; });
           break;
         case 'MM':
-          dateObject.month = options.months.findIndex(function(el) { return el === matched });
+          dateObject.month = options.months.findIndex(function(el) { return el === matched; });
           break;
         case '@':
           dateObject.epoch = +matched;
@@ -271,11 +271,11 @@
 
     this.$container.removeClass('in');
     this.$container.detach();
-  }
+  };
 
   Datepicker.prototype.render = function() {
     this.$container.html(renderCalendar.call(this));
-  }
+  };
 
   Datepicker.prototype.val = function(val) {
     var formattedDate = formatDate(this.options.dateFormat, this.selectedDate, this.options);
@@ -290,7 +290,7 @@
       var altFormat = this.options.altFormat || this.options.dateFormat;
       $(this.options.altField).val(formatDate(altFormat, this.selectedDate, this.options));
     }
-  }
+  };
 
   Datepicker.prototype.getDate = function() {
     return this.selectedDate;
@@ -414,9 +414,9 @@
     output += '<tr>';
 
     for (i = 0; i < 7; i++) {
-      output += '<th>'
+      output += '<th>';
       output += this.options.daysMin[(i + this.options.firstDay) % 7];
-      output += '</th>'
+      output += '</th>';
     }
 
     output += '</tr>';
