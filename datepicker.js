@@ -57,13 +57,13 @@
     var date = null;
 
     if (typeof val === 'number') {
-      date = datePart(new Date);
+      date = datePart(new Date());
       date.setDate(date.getDate() + val);
     } else if (typeof val === 'string') {
       try {
         date = parseDate(options.dateFormat, val, options);
       } catch(e) {
-        date = datePart(new Date);
+        date = datePart(new Date());
         date.setDate(date.getDate() + +val);
       }
     } else {
@@ -213,7 +213,7 @@
 
     this.isInput = this.$element.is('input');
 
-    this.selectedDate = datePart(new Date);
+    this.selectedDate = datePart(new Date());
 
     var defaultDate = this.options.defaultDate;
     if (typeof defaultDate === 'string') {
@@ -377,7 +377,7 @@
   function renderCalendar() {
     var i, j, classes, isCellSelectable;
 
-    var today           = datePart(new Date),
+    var today           = datePart(new Date()),
         year            = this.currentDate.getFullYear(),
         month           = this.currentDate.getMonth(),
         prevDate        = new Date(year, month, 0),
