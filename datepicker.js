@@ -469,7 +469,7 @@
     output += '</table>';
 
     return output;
-  };
+  }
 
   // DATEPICKER PLUGIN DEFINITION
   // ============================
