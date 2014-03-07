@@ -256,6 +256,11 @@
     this.render();
     $(document.body).append(this.$container);
 
+    var self = this;
+    setTimeout(function() {
+      self.$container.addClass('in');
+    }, 25);
+
     positionContainer.call(this);
   };
 
@@ -264,6 +269,7 @@
     this.$element.trigger(ev);
     if (ev.isDefaultPrevented()) return;
 
+    this.$container.removeClass('in');
     this.$container.detach();
   }
 
