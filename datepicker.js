@@ -64,7 +64,7 @@
         date = parseDate(options.dateFormat, val, options);
       } catch(e) {
         date = datePart(new Date());
-        date.setDate(date.getDate() + +val);
+        date.setDate(date.getDate() + (+val));
       }
     } else {
       date = val;
