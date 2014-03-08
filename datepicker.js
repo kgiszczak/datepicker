@@ -299,7 +299,8 @@
   Datepicker.prototype.setDate = function(date) {
     if (typeof date === 'string') date = parseDate(this.options.dateFormat, date, this.options);
 
-    this.selectedDate = this.currentDate = date;
+    this.selectedDate = datePart(date);
+    this.currentDate = datePart(date);
     this.render();
     this.val(this.selectedDate);
   };
