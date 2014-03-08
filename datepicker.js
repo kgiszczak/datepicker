@@ -319,7 +319,7 @@
   // DATEPICKER PRIVATE FUNCTIONS DEFINITION
   // =======================================
 
-  function keydown(e) {
+  var keydown = function(e) {
     if (e.which === 9 || e.which === 27) this.hide();
 
     var change = null;
@@ -367,9 +367,9 @@
       this.currentDate = new Date(this.activeDate);
       this.render();
     }
-  }
+  };
 
-  function changeMonth(e) {
+  var changeMonth = function(e) {
     e.preventDefault();
 
     var dateString = $(e.target).data('date');
@@ -381,9 +381,9 @@
       this.currentDate = date;
       this.$container.html(renderCalendar.call(this));
     }
-  }
+  };
 
-  function select(e) {
+  var select = function(e) {
     e.preventDefault();
 
     var dateString = $(e.target).data('date');
@@ -397,9 +397,9 @@
     }
 
     this.hide();
-  }
+  };
 
-  function positionContainer() {
+  var positionContainer = function() {
     var cWidth = this.$container.outerWidth();
     var cHeight = this.$container.outerHeight();
 
@@ -424,9 +424,9 @@
     if (align[1] === 'middle') top -= cHeight / 2 - height / 2;
 
     this.$container.css({left: left, top: top});
-  }
+  };
 
-  function renderCalendar() {
+  var renderCalendar = function() {
     var i, j, classes, isCellSelectable;
 
     var today           = datePart(new Date()),
@@ -522,7 +522,7 @@
     output += '</table>';
 
     return output;
-  }
+  };
 
   // DATEPICKER PLUGIN DEFINITION
   // ============================
