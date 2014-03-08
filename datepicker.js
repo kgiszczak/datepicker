@@ -22,6 +22,9 @@
     maxDate: null
   };
 
+  var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
+    '<input type="text"></div>';
+
   var regextOneOrTwoDigit = /\d\d?/;
   var regexTwoDigit = /\d\d/;
   var regexFourDigit = /\d{4}/;
@@ -229,10 +232,12 @@
     this.currentDate = new Date(this.selectedDate.getTime());
 
     this.$container = $(this.options.container);
+    this.$input = $(INPUT_TEMPLATE);
 
     this.$element
       .on(this.isInput ? 'focus' : 'click', $.proxy(this.show, this))
       .on('keydown', $.proxy(keydown, this));
+    this.$input.find('input').on('keydown', $.proxy(keydown, this));
 
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
@@ -252,6 +257,10 @@
 
     this.render();
     $(document.body).append(this.$container);
+    if (!this.isInput) {
+      $(document.body).append(this.$input);
+      this.$input.find('input').focus();
+    }
 
     var self = this;
     setTimeout(function() {
@@ -268,6 +277,7 @@
 
     this.$container.removeClass('in');
     this.$container.detach();
+    if (!this.isInput) this.$input.detach();
   };
 
   Datepicker.prototype.render = function() {
