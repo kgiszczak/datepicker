@@ -19,7 +19,8 @@
     nextText: '&raquo;',
     dayFormat: 'd',
     minDate: null,
-    maxDate: null
+    maxDate: null,
+    keyboard: true
   };
 
   var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
@@ -338,19 +339,21 @@
         change = 7;
         break;
       case 13:
-        e.preventDefault();
+        if (this.options.keyboard) {
+          e.preventDefault();
 
-        var ev = $.Event('select.datepicker', {selectedDate: this.activeDate});
-        this.$element.triggerHandler(ev);
-        if (!ev.isDefaultPrevented()) {
-          this.selectedDate = new Date(this.activeDate.getTime());
-          this.val(this.selectedDate);
-        }
-        this.hide();
+          var ev = $.Event('select.datepicker', {selectedDate: this.activeDate});
+          this.$element.triggerHandler(ev);
+          if (!ev.isDefaultPrevented()) {
+            this.selectedDate = new Date(this.activeDate.getTime());
+            this.val(this.selectedDate);
+          }
+          this.hide();
+          }
         break;
     }
 
-    if (change) {
+    if (this.options.keyboard && change) {
       e.preventDefault();
       if (!this.activeDate) this.activeDate = new Date(this.selectedDate.getTime());
 
