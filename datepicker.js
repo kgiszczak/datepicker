@@ -226,17 +226,13 @@
       this.selectedDate = parseDate(this.options.dateFormat, this.$element.val(), this.options);
     }
 
-    this.currentDate = this.selectedDate;
+    this.currentDate = new Date(this.selectedDate.getTime());
 
     this.$container = $(this.options.container);
 
-    if (this.isInput) {
-      this.$element
-        .on('focus', $.proxy(this.show, this))
-        .on('keydown', $.proxy(keydown, this));
-    } else {
-      this.$element.on('click', $.proxy(this.show, this));
-    }
+    this.$element
+      .on(this.isInput ? 'focus' : 'click', $.proxy(this.show, this))
+      .on('keydown', $.proxy(keydown, this));
 
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
@@ -251,7 +247,8 @@
     this.$element.trigger(ev);
     if (ev.isDefaultPrevented()) return;
 
-    this.currentDate = this.selectedDate;
+    this.currentDate = new Date(this.selectedDate.getTime());
+    this.activeDate = null;
 
     this.render();
     $(document.body).append(this.$container);
@@ -313,7 +310,53 @@
   // =======================================
 
   function keydown(e) {
-    if (e.which === 9) this.hide();
+    if (e.which === 9 || e.which === 27) this.hide();
+
+    var change = null;
+
+    switch (e.which) {
+      case 37: // left
+        change = -1;
+        break;
+      case 38: // up
+        change = -7;
+        break;
+      case 39: // right
+        change = 1;
+        break;
+      case 40: // down
+        change = 7;
+        break;
+      case 13:
+        e.preventDefault();
+
+        var ev = $.Event('select.datepicker', {selectedDate: this.activeDate});
+        this.$element.triggerHandler(ev);
+        if (!ev.isDefaultPrevented()) {
+          this.selectedDate = new Date(this.activeDate.getTime());
+          this.val(this.selectedDate);
+        }
+        this.hide();
+        break;
+    }
+
+    if (change) {
+      e.preventDefault();
+      if (!this.activeDate) this.activeDate = new Date(this.selectedDate.getTime());
+
+      var minDate = dateFromOption(this.options.minDate, this.options);
+      var maxDate = dateFromOption(this.options.maxDate, this.options);
+
+      var newDate = new Date(this.activeDate.getTime());
+      newDate = newDate.setDate(newDate.getDate() + change);
+
+      if (minDate && minDate > newDate) change = 0;
+      if (minDate && maxDate < newDate) change = 0;
+
+      this.activeDate.setDate(this.activeDate.getDate() + change);
+      this.currentDate = new Date(this.activeDate);
+      this.render();
+    }
   }
 
   function changeMonth(e) {
@@ -340,8 +383,6 @@
     this.$element.triggerHandler(ev);
     if (!ev.isDefaultPrevented()) {
       this.selectedDate = date;
-
-      this.$container.html(renderCalendar.call(this));
       this.val(this.selectedDate);
     }
 
@@ -451,6 +492,7 @@
         if (!isCellSelectable) classes.push('disabled');
         if (today - day === 0) classes.push('today');
         if (this.selectedDate - day === 0) classes.push('selected');
+        if (this.activeDate && this.activeDate - day === 0) classes.push('active');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, day) + '>' : '<span>';
