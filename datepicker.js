@@ -7,7 +7,7 @@
     days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     daysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-    container: '<div class="datepicker"></div>',
+    container: '<div class="datepicker" tabindex="0"></div>',
     firstDay: 0,
     defaultDate: null,
     altField: null,
@@ -243,7 +243,8 @@
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
       .on('click', 'a.prev-link, a.next-link', $.proxy(changeMonth, this))
-      .on('click', 'table a', $.proxy(select, this));
+      .on('click', 'table a', $.proxy(select, this))
+      .on('keydown', $.proxy(keydown, this));
   };
 
   Datepicker.prototype.show = function(e) {
