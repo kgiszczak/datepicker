@@ -347,8 +347,8 @@
         if (this.options.keyboard) {
           e.preventDefault();
 
-          var ev = $.Event('select.datepicker', {selectedDate: this.activeDate});
-          this.$element.triggerHandler(ev);
+          var ev = $.Event('selectDate.datepicker', {selectedDate: this.activeDate});
+          this.$element.trigger(ev);
           if (!ev.isDefaultPrevented()) {
             this.selectedDate = new Date(this.activeDate.getTime());
             this.val(this.selectedDate);
@@ -397,8 +397,8 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    var ev = $.Event('select.datepicker', {selectedDate: date});
-    this.$element.triggerHandler(ev);
+    var ev = $.Event('selectDate.datepicker', {selectedDate: date});
+    this.$element.trigger(ev);
     if (!ev.isDefaultPrevented()) {
       this.selectedDate = date;
       this.val(this.selectedDate);
