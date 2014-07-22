@@ -287,7 +287,7 @@
   };
 
   Datepicker.prototype.val = function(val) {
-    var formattedDate = formatDate(this.options.dateFormat, this.selectedDate, this.options);
+    var formattedDate = formatDate(this.options.dateFormat, val, this.options);
 
     if (this.isInput) {
       this.$element.val(formattedDate);
@@ -297,7 +297,7 @@
 
     if (this.options.altField) {
       var altFormat = this.options.altFormat || this.options.dateFormat;
-      $(this.options.altField).val(formatDate(altFormat, this.selectedDate, this.options));
+      $(this.options.altField).val(formatDate(altFormat, val, this.options));
     }
   };
 
