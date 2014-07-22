@@ -350,7 +350,7 @@
             this.val(this.selectedDate);
           }
           this.hide();
-          }
+        }
         break;
     }
 
