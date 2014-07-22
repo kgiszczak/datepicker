@@ -289,6 +289,10 @@
   Datepicker.prototype.val = function(val) {
     var formattedDate = formatDate(this.options.dateFormat, val, this.options);
 
+    var ev = $.Event('val.datepicker', {date: val, formattedDate: formattedDate});
+    this.$element.trigger(ev);
+    if (ev.isDefaultPrevented()) return;
+
     if (this.isInput) {
       this.$element.val(formattedDate);
     } else {
