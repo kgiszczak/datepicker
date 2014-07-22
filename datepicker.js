@@ -516,6 +516,8 @@
         if (today - day === 0) classes.push('today');
         if (this.selectedDate - day === 0) classes.push('selected');
         if (this.activeDate && this.activeDate - day === 0) classes.push('active');
+        if (day.getDay() === 0) classes.push('sunday');
+        if (day.getDay() === 6) classes.push('saturday');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, day) + '>' : '<span>';
