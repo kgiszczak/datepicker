@@ -403,6 +403,11 @@
     this.hide();
   };
 
+  // available options:
+  // bottom-left, bottom-center, bottom-right
+  // top-left, top-center, top-right
+  // left-top left-bottom left-middle
+  // right-top right-bottom right-middle
   var positionContainer = function() {
     var cWidth = this.$container.outerWidth();
     var cHeight = this.$container.outerHeight();
