@@ -217,20 +217,20 @@
 
     this.isInput = this.$element.is('input');
 
-    this.selectedDate = datePart(new Date());
+    this.selectedDates = [datePart(new Date())];
 
     var defaultDate = this.options.defaultDate;
     if (typeof defaultDate === 'string') {
-      this.selectedDate = parseDate(this.options.dateFormat, defaultDate, this.options);
+      this.selectedDates = [parseDate(this.options.dateFormat, defaultDate, this.options)];
     } else if (typeof defaultDate === 'object' && defaultDate !== null) {
-      this.selectedDate = defaultDate;
+      this.selectedDates = [defaultDate];
     }
 
     if (this.isInput && this.$element.val() !== '') {
-      this.selectedDate = parseDate(this.options.dateFormat, this.$element.val(), this.options);
+      this.selectedDates = [parseDate(this.options.dateFormat, this.$element.val(), this.options)];
     }
 
-    this.currentDate = new Date(this.selectedDate.getTime());
+    this.currentDate = new Date(this.selectedDates[0].getTime());
 
     this.$container = $(this.options.container);
     this.$input = $(INPUT_TEMPLATE);
@@ -254,7 +254,7 @@
     this.$element.trigger(ev);
     if (ev.isDefaultPrevented()) return;
 
-    this.currentDate = new Date(this.selectedDate.getTime());
+    this.currentDate = new Date(this.selectedDates[0].getTime());
     this.activeDate = null;
 
     this.render();
@@ -306,16 +306,16 @@
   };
 
   Datepicker.prototype.getDate = function() {
-    return this.selectedDate;
+    return this.selectedDates;
   };
 
   Datepicker.prototype.setDate = function(date) {
     if (typeof date === 'string') date = parseDate(this.options.dateFormat, date, this.options);
 
-    this.selectedDate = datePart(date);
+    this.selectedDates = [datePart(date)];
     this.currentDate = datePart(date);
     this.render();
-    this.val(this.selectedDate);
+    this.val(this.selectedDates[0]);
   };
 
   Datepicker.prototype.setOptions = function(options) {
@@ -346,13 +346,13 @@
       case 13:
         if (this.options.keyboard) {
           e.preventDefault();
-          if (!this.activeDate) this.activeDate = new Date(this.selectedDate.getTime());
+          if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
 
           var ev = $.Event('selectDate.datepicker', {selectedDate: this.activeDate});
           this.$element.trigger(ev);
           if (!ev.isDefaultPrevented()) {
-            this.selectedDate = new Date(this.activeDate.getTime());
-            this.val(this.selectedDate);
+            this.selectedDates = [new Date(this.activeDate.getTime())];
+            this.val(this.selectedDates[0]);
           }
           this.hide();
         }
@@ -361,7 +361,7 @@
 
     if (this.options.keyboard && change) {
       e.preventDefault();
-      if (!this.activeDate) this.activeDate = new Date(this.selectedDate.getTime());
+      if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
 
       var minDate = dateFromOption(this.options.minDate, this.options);
       var maxDate = dateFromOption(this.options.maxDate, this.options);
@@ -401,8 +401,8 @@
     var ev = $.Event('selectDate.datepicker', {selectedDate: date});
     this.$element.trigger(ev);
     if (!ev.isDefaultPrevented()) {
-      this.selectedDate = date;
-      this.val(this.selectedDate);
+      this.selectedDates = [date];
+      this.val(this.selectedDates[0]);
     }
 
     this.hide();
@@ -515,7 +515,7 @@
 
         if (!isCellSelectable) classes.push('disabled');
         if (today - day === 0) classes.push('today');
-        if (this.selectedDate - day === 0) classes.push('selected');
+        if (this.selectedDates[0] - day === 0) classes.push('selected');
         if (this.activeDate && this.activeDate - day === 0) classes.push('active');
         if (day.getDay() === 0) classes.push('sunday');
         if (day.getDay() === 6) classes.push('saturday');
