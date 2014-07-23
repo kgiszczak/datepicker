@@ -549,19 +549,19 @@
     if (option === 'getDate') {
       var $this = $(this[0]);
       $this.datepicker();
-      var data = $this.data('datepicker');
+      var data = $this.data('datepicker.instance');
 
       return data[option](val);
     }
 
     return this.each(function() {
       var $this   = $(this);
-      var data    = $this.data('datepicker');
+      var data    = $this.data('datepicker.instance');
       var options = $.extend({}, DEFAULTS, typeof option === 'object' && option);
 
       if (!data) {
         $this
-          .data('datepicker', (data = new Datepicker(this, options)))
+          .data('datepicker.instance', (data = new Datepicker(this, options)))
           .attr('data-datepicker-instance', '');
       }
       if (typeof option === 'string') data[option](val);
