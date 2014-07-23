@@ -83,10 +83,10 @@
   }
 
   var formatters = {
-    d: function(options) {
+    d: function() {
       return this.getDate();
     },
-    dd: function(options) {
+    dd: function() {
       return formatNumber(this.getDate());
     },
     D: function(options) {
@@ -95,10 +95,10 @@
     DD: function(options) {
       return options.days[this.getDay()];
     },
-    m: function(options) {
+    m: function() {
       return this.getMonth() + 1;
     },
-    mm: function(options) {
+    mm: function() {
       return formatNumber(this.getMonth() + 1);
     },
     M: function(options) {
@@ -107,13 +107,13 @@
     MM: function(options) {
       return options.months[this.getMonth()];
     },
-    y: function(options) {
+    y: function() {
       return formatNumber(this.getFullYear() % 100);
     },
-    yy: function(options) {
+    yy: function() {
       return this.getFullYear();
     },
-    '@': function(options) {
+    '@': function() {
       return this.getTime();
     }
   };
