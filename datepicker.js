@@ -346,6 +346,7 @@
       case 13:
         if (this.options.keyboard) {
           e.preventDefault();
+          if (!this.activeDate) this.activeDate = new Date(this.selectedDate.getTime());
 
           var ev = $.Event('selectDate.datepicker', {selectedDate: this.activeDate});
           this.$element.trigger(ev);
