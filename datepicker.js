@@ -195,10 +195,12 @@
       regex = tokenRegex[token];
       if (!regex) regex = new RegExp(token, 'i');
 
-      matched = (string.match(regex) || [])[0];
-      string = string.substr(matched.length);
+      matched = string.match(regex);
 
-      addPartToDateObject(token, matched);
+      if (matched) {
+        string = string.substr(matched.index + matched[0].length);
+        addPartToDateObject(token, matched[0]);
+      }
     }
 
     if (dateObject.epoch) {
