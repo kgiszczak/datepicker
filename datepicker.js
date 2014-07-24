@@ -345,12 +345,7 @@
           e.preventDefault();
           if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
 
-          if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: this.activeDate})) {
-            this.selectedDates = [new Date(this.activeDate.getTime())];
-            this.val(this.selectedDates[0]);
-          }
-
-          this.hide();
+          selectDate.call(this, new Date(this.activeDate.getTime()));
         }
         break;
     }
@@ -392,12 +387,21 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
+    this.activeDate = new Date(date.getTime());
+
+    selectDate.call(this, date);
+  };
+
+  var selectDate = function(date) {
     if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: date})) {
       this.selectedDates = [date];
       this.val(this.selectedDates[0]);
+      this.render();
     }
 
-    this.hide();
+    if (!triggerEvent.call(this, 'selectedDate.datepicker', {selectedDate: date})) {
+      this.hide();
+    }
   };
 
   var triggerEvent = function(name, params) {
