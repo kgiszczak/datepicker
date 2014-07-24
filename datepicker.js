@@ -215,7 +215,7 @@
 
   var Datepicker = function(element, options) {
     this.$element = $(element);
-    this.options  = options;
+    this.options  = $.extend({}, DEFAULTS, options);
 
     this.isInput = this.$element.is('input');
 
@@ -555,13 +555,12 @@
     }
 
     return this.each(function() {
-      var $this   = $(this);
-      var data    = $this.data('datepicker.instance');
-      var options = $.extend({}, DEFAULTS, typeof option === 'object' && option);
+      var $this = $(this),
+          data  = $this.data('datepicker.instance');
 
       if (!data) {
         $this
-          .data('datepicker.instance', (data = new Datepicker(this, options)))
+          .data('datepicker.instance', (data = new Datepicker(this, typeof option === 'object' && option)))
           .attr('data-datepicker-instance', '');
       }
       if (typeof option === 'string') data[option](val);
