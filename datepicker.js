@@ -252,9 +252,7 @@
   Datepicker.prototype.show = function(e) {
     if (e) e.preventDefault();
 
-    var ev = $.Event('show.datepicker');
-    this.$element.trigger(ev);
-    if (ev.isDefaultPrevented()) return;
+    if (triggerEvent.call(this, 'show.datepicker')) return;
 
     this.currentDate = new Date(this.selectedDates[0].getTime());
     this.activeDate = null;
@@ -275,9 +273,7 @@
   };
 
   Datepicker.prototype.hide = function() {
-    var ev = $.Event('hide.datepicker');
-    this.$element.trigger(ev);
-    if (ev.isDefaultPrevented()) return;
+    if (triggerEvent.call(this, 'hide.datepicker')) return;
 
     this.$container.removeClass('in');
     this.$container.detach();
@@ -291,9 +287,8 @@
   Datepicker.prototype.val = function(val) {
     var formattedDate = formatDate(this.options.dateFormat, val, this.options);
 
-    var ev = $.Event('val.datepicker', {date: val, formattedDate: formattedDate});
-    this.$element.trigger(ev);
-    if (ev.isDefaultPrevented()) return;
+    if (triggerEvent.call(this, 'val.datepicker', {date: val, formattedDate: formattedDate}))
+      return;
 
     if (this.isInput) {
       this.$element.val(formattedDate);
@@ -350,12 +345,11 @@
           e.preventDefault();
           if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
 
-          var ev = $.Event('selectDate.datepicker', {selectedDate: this.activeDate});
-          this.$element.trigger(ev);
-          if (!ev.isDefaultPrevented()) {
+          if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: this.activeDate})) {
             this.selectedDates = [new Date(this.activeDate.getTime())];
             this.val(this.selectedDates[0]);
           }
+
           this.hide();
         }
         break;
@@ -386,9 +380,7 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    var ev = $.Event('changeMonth.datepicker', {selectedDate: date});
-    this.$element.trigger(ev);
-    if (!ev.isDefaultPrevented()) {
+    if (!triggerEvent.call(this, 'changeMonth.datepicker', {selectedDate: date})) {
       this.currentDate = date;
       this.render();
     }
@@ -400,14 +392,18 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    var ev = $.Event('selectDate.datepicker', {selectedDate: date});
-    this.$element.trigger(ev);
-    if (!ev.isDefaultPrevented()) {
+    if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: date})) {
       this.selectedDates = [date];
       this.val(this.selectedDates[0]);
     }
 
     this.hide();
+  };
+
+  var triggerEvent = function(name, params) {
+    var e = $.Event(name, params);
+    this.$element.trigger(e);
+    return e.isDefaultPrevented();
   };
 
   // available options:
