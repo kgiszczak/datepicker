@@ -375,7 +375,7 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    if (!triggerEvent.call(this, 'changeMonth.datepicker', {selectedDate: date})) {
+    if (!triggerEvent.call(this, 'changeMonth.datepicker', {date: date})) {
       this.currentDate = date;
       this.render();
     }
@@ -391,14 +391,14 @@
   };
 
   var selectDate = function(date) {
-    if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: date})) {
+    if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
       this.selectedDates = [new Date(date.getTime())];
       this.activeDate = null;
       this.val(this.selectedDates[0]);
       this.render();
     }
 
-    if (!triggerEvent.call(this, 'selectedDate.datepicker', {selectedDate: date})) {
+    if (!triggerEvent.call(this, 'selectedDate.datepicker', {date: date})) {
       this.hide();
     }
   };
