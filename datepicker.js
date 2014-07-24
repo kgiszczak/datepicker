@@ -343,9 +343,9 @@
       case 13:
         if (this.options.keyboard) {
           e.preventDefault();
-          if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
 
-          selectDate.call(this, new Date(this.activeDate.getTime()));
+          if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
+          selectDate.call(this, this.activeDate);
         }
         break;
     }
@@ -387,14 +387,13 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    this.activeDate = new Date(date.getTime());
-
     selectDate.call(this, date);
   };
 
   var selectDate = function(date) {
     if (!triggerEvent.call(this, 'selectDate.datepicker', {selectedDate: date})) {
-      this.selectedDates = [date];
+      this.selectedDates = [new Date(date.getTime())];
+      this.activeDate = null;
       this.val(this.selectedDates[0]);
       this.render();
     }
