@@ -390,7 +390,7 @@
     this.$element.trigger(ev);
     if (!ev.isDefaultPrevented()) {
       this.currentDate = date;
-      this.$container.html(renderCalendar.call(this));
+      this.render();
     }
   };
 
