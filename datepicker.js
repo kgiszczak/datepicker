@@ -361,7 +361,7 @@
       newDate = newDate.setDate(newDate.getDate() + change);
 
       if (minDate && minDate > newDate) change = 0;
-      if (minDate && maxDate < newDate) change = 0;
+      if (maxDate && maxDate < newDate) change = 0;
 
       this.activeDate.setDate(this.activeDate.getDate() + change);
       this.currentDate = new Date(this.activeDate);
