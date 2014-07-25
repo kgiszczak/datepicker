@@ -55,19 +55,23 @@
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
+  function createDate(d) {
+    return datePart(d || new Date());
+  }
+
   function dateFromOption(val, options) {
     if (!val) return null;
 
     var date = null;
 
     if (typeof val === 'number') {
-      date = datePart(new Date());
+      date = createDate();
       date.setDate(date.getDate() + val);
     } else if (typeof val === 'string') {
       try {
         date = parseDate(options.dateFormat, val, options);
       } catch(e) {
-        date = datePart(new Date());
+        date = createDate();
         date.setDate(date.getDate() + (+val));
       }
     } else {
@@ -232,7 +236,7 @@
       this.selectedDates = [parseDate(this.options.dateFormat, this.$element.val(), this.options)];
     }
 
-    this.currentDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
+    this.currentDate = createDate(this.selectedDates[0]);
 
     this.$container = $(this.options.container);
     this.$input = $(INPUT_TEMPLATE);
@@ -254,7 +258,7 @@
 
     if (triggerEvent.call(this, 'show.datepicker')) return;
 
-    this.currentDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
+    this.currentDate = createDate(this.selectedDates[0]);
     this.activeDate = null;
 
     this.render();
@@ -344,7 +348,7 @@
         if (this.options.keyboard) {
           e.preventDefault();
 
-          if (!this.activeDate) this.activeDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
+          if (!this.activeDate) this.activeDate = createDate(this.selectedDates[0]);
           selectDate.call(this, this.activeDate);
         }
         break;
@@ -352,19 +356,19 @@
 
     if (this.options.keyboard && change) {
       e.preventDefault();
-      if (!this.activeDate) this.activeDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
+      if (!this.activeDate) this.activeDate = createDate(this.selectedDates[0]);
 
       var minDate = dateFromOption(this.options.minDate, this.options);
       var maxDate = dateFromOption(this.options.maxDate, this.options);
 
-      var newDate = new Date(this.activeDate.getTime());
+      var newDate = createDate(this.activeDate);
       newDate = newDate.setDate(newDate.getDate() + change);
 
       if (minDate && minDate > newDate) change = 0;
       if (maxDate && maxDate < newDate) change = 0;
 
       this.activeDate.setDate(this.activeDate.getDate() + change);
-      this.currentDate = new Date(this.activeDate.getTime());
+      this.currentDate = createDate(this.activeDate);
       this.render();
     }
   };
@@ -392,7 +396,7 @@
 
   var selectDate = function(date) {
     if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
-      this.selectedDates = [new Date(date.getTime())];
+      this.selectedDates = [createDate(date)];
       this.activeDate = null;
       this.val(this.selectedDates[0]);
       this.render();
@@ -444,7 +448,7 @@
   var renderCalendar = function() {
     var i, j, classes, isCellSelectable;
 
-    var today           = datePart(new Date()),
+    var today           = createDate(),
         year            = this.currentDate.getFullYear(),
         month           = this.currentDate.getMonth(),
         prevDate        = new Date(year, month, 0),
