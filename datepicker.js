@@ -219,7 +219,7 @@
 
     this.isInput = this.$element.is('input');
 
-    this.selectedDates = [datePart(new Date())];
+    this.selectedDates = [];
 
     var defaultDate = this.options.defaultDate;
     if (typeof defaultDate === 'string') {
@@ -232,7 +232,7 @@
       this.selectedDates = [parseDate(this.options.dateFormat, this.$element.val(), this.options)];
     }
 
-    this.currentDate = new Date(this.selectedDates[0].getTime());
+    this.currentDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
 
     this.$container = $(this.options.container);
     this.$input = $(INPUT_TEMPLATE);
@@ -254,7 +254,7 @@
 
     if (triggerEvent.call(this, 'show.datepicker')) return;
 
-    this.currentDate = new Date(this.selectedDates[0].getTime());
+    this.currentDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
     this.activeDate = null;
 
     this.render();
@@ -344,7 +344,7 @@
         if (this.options.keyboard) {
           e.preventDefault();
 
-          if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
+          if (!this.activeDate) this.activeDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
           selectDate.call(this, this.activeDate);
         }
         break;
@@ -352,7 +352,7 @@
 
     if (this.options.keyboard && change) {
       e.preventDefault();
-      if (!this.activeDate) this.activeDate = new Date(this.selectedDates[0].getTime());
+      if (!this.activeDate) this.activeDate = new Date((this.selectedDates[0] || datePart(new Date())).getTime());
 
       var minDate = dateFromOption(this.options.minDate, this.options);
       var maxDate = dateFromOption(this.options.maxDate, this.options);
@@ -364,7 +364,7 @@
       if (maxDate && maxDate < newDate) change = 0;
 
       this.activeDate.setDate(this.activeDate.getDate() + change);
-      this.currentDate = new Date(this.activeDate);
+      this.currentDate = new Date(this.activeDate.getTime());
       this.render();
     }
   };
