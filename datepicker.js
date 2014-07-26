@@ -513,7 +513,7 @@
       this.render();
     }
 
-    if (!triggerEvent.call(this, 'selectedDate.datepicker', {date: date})) {
+    if (!triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
       this.hide();
     }
   };
