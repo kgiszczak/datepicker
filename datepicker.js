@@ -253,6 +253,7 @@
   var DateSelection = function(mode) {
     this.dates = [];
     this.isMulti = mode === 'multi';
+    this.isRange = mode === 'range';
   };
 
   DateSelection.prototype.get = function(i) {
@@ -271,6 +272,10 @@
       } else {
         this.dates.push(date);
       }
+    } else if (this.isRange) {
+      if (this.dates.length > 1) this.dates.length = 0;
+      this.dates.push(date);
+      this.dates.sort(function(a, b) { return a - b; });
     } else {
       this.dates.splice(0, 1, date);
     }
@@ -284,6 +289,11 @@
     }
 
     return -1;
+  };
+
+  DateSelection.prototype.inRange = function(date) {
+    if (this.dates.length < 2) return false;
+    return this.dates[0] < date && this.dates[1] > date;
   };
 
   // DATEPICKER CLASS DEFINITION
@@ -513,7 +523,9 @@
       this.render();
     }
 
-    if (!triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
+    var rangeSelection = this.options.selectionMode === 'range'
+    if ((rangeSelection && this.selectedDates.get().length === 2 || !rangeSelection) &&
+        !triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
       this.hide();
     }
   };
@@ -632,6 +644,9 @@
         if (!isCellSelectable) classes.push('disabled');
         if (today - day === 0) classes.push('today');
         if (this.selectedDates.contains(day) !== -1) classes.push('selected');
+        if (this.options.selectionMode === 'range' && this.selectedDates.inRange(day)) {
+          classes.push('range');
+        }
         if (this.activeDate && this.activeDate - day === 0) classes.push('active');
         if (day.getDay() === 0) classes.push('sunday');
         if (day.getDay() === 6) classes.push('saturday');
