@@ -20,7 +20,9 @@
     dayFormat: 'd',
     minDate: null,
     maxDate: null,
-    keyboard: true
+    keyboard: true,
+    selectionMode: 'single',
+    separator: ', '
   };
 
   var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
@@ -214,29 +216,114 @@
     }
   }
 
+  function splitStringByFormat(format, string) {
+    var parts = [], i, token, regex, matched, str, lastIndex;
+
+    var tokens = format.match(formattingTokens);
+
+    while (true) {
+      str = string;
+      lastIndex = 0;
+
+      for (i = 0; i < tokens.length; i++) {
+        token = tokens[i];
+
+        regex = tokenRegex[token];
+        if (!regex) regex = new RegExp(token, 'i');
+
+        matched = str.match(regex);
+
+        if (matched) {
+          lastIndex += matched.index + matched[0].length;
+          str = str.substr(matched.index + matched[0].length);
+        }
+      }
+
+      if (string === str) break;
+      parts.push(string.substr(0, lastIndex));
+      string = string.substr(lastIndex);
+    }
+
+    return parts;
+  }
+
+  // DATESELECTION CLASS DEFINITION
+  // ==============================
+
+  var DateSelection = function(mode) {
+    this.dates = [];
+    this.isMulti = mode === 'multi';
+  };
+
+  DateSelection.prototype.get = function(i) {
+    if (typeof i === 'undefined') return this.dates;
+    return i < 0 ? this.dates[this.dates.length + i] : this.dates[i];
+  };
+
+  DateSelection.prototype.push = function(date) {
+    date = createDate(date);
+
+    if (this.isMulti) {
+      var i = this.contains(date);
+
+      if (i !== -1) {
+        this.dates.splice(i, 1);
+      } else {
+        this.dates.push(date);
+      }
+    } else {
+      this.dates.splice(0, 1, date);
+    }
+  };
+
+  DateSelection.prototype.contains = function(date) {
+    date = createDate(date);
+
+    for (var i = 0; i < this.dates.length; i++) {
+      if (this.dates[i] - date === 0) return i;
+    }
+
+    return -1;
+  };
+
   // DATEPICKER CLASS DEFINITION
   // ===========================
 
   var Datepicker = function(element, options) {
+    var i;
+
     this.$element = $(element);
     this.options  = $.extend({}, DEFAULTS, options);
 
     this.isInput = this.$element.is('input');
 
-    this.selectedDates = [];
+    this.selectedDates = new DateSelection(this.options.selectionMode);
 
-    var defaultDate = this.options.defaultDate;
-    if (typeof defaultDate === 'string') {
-      this.selectedDates = [parseDate(this.options.dateFormat, defaultDate, this.options)];
-    } else if (typeof defaultDate === 'object' && defaultDate !== null) {
-      this.selectedDates = [defaultDate];
+    var dates = this.options.defaultDate;
+    if (dates) {
+      if (!$.isArray(dates)) dates = [dates];
+
+      for (i = 0; i < dates.length; i++) {
+        if (typeof dates[i] === 'string') {
+          this.selectedDates.push(parseDate(this.options.dateFormat, dates[i], this.options));
+        } else {
+          this.selectedDates.push(dates[i]);
+        }
+
+        if (this.options.selectionMode === 'single') break;
+      }
     }
 
     if (this.isInput && this.$element.val() !== '') {
-      this.selectedDates = [parseDate(this.options.dateFormat, this.$element.val(), this.options)];
+      var parts = splitStringByFormat(this.options.dateFormat, this.$element.val());
+
+      for (i = 0; i < parts.length; i++) {
+        this.selectedDates.push(parseDate(this.options.dateFormat, parts[i], this.options));
+        if (this.options.selectionMode === 'single') break;
+      }
     }
 
-    this.currentDate = createDate(this.selectedDates[0]);
+    this.currentDate = createDate(this.selectedDates.get(0));
 
     this.$container = $(this.options.container);
     this.$input = $(INPUT_TEMPLATE);
@@ -258,7 +345,7 @@
 
     if (triggerEvent.call(this, 'show.datepicker')) return;
 
-    this.currentDate = createDate(this.selectedDates[0]);
+    this.currentDate = createDate(this.selectedDates.get(0));
     this.activeDate = null;
 
     this.render();
@@ -289,34 +376,58 @@
   };
 
   Datepicker.prototype.val = function(val) {
-    var formattedDate = formatDate(this.options.dateFormat, val, this.options);
+    var formattedDates = [], i, out;
 
-    if (triggerEvent.call(this, 'val.datepicker', {date: val, formattedDate: formattedDate}))
+    for (i = 0; i < val.length; i++) {
+      formattedDates.push(formatDate(this.options.dateFormat, val[i], this.options));
+    }
+
+    out = formattedDates.join(this.options.separator)
+
+    if (triggerEvent.call(this, 'val.datepicker', {dates: val, formattedDates: out}))
       return;
 
     if (this.isInput) {
-      this.$element.val(formattedDate);
+      this.$element.val(out);
     } else {
-      this.$element.html(formattedDate);
+      this.$element.html(out);
     }
 
     if (this.options.altField) {
       var altFormat = this.options.altFormat || this.options.dateFormat;
-      $(this.options.altField).val(formatDate(altFormat, val, this.options));
+
+      formattedDates = [];
+      for (i = 0; i < val.length; i++) {
+        formattedDates.push(formatDate(altFormat, val[i], this.options));
+      }
+
+      $(this.options.altField).val(formattedDates.join(this.options.separator));
     }
   };
 
-  Datepicker.prototype.getDate = function() {
-    return this.selectedDates;
+  Datepicker.prototype.getDates = function() {
+    return this.selectedDates.get();
   };
 
-  Datepicker.prototype.setDate = function(date) {
-    if (typeof date === 'string') date = parseDate(this.options.dateFormat, date, this.options);
+  Datepicker.prototype.setDates = function(dates) {
+    var i, date;
 
-    this.selectedDates = [datePart(date)];
-    this.currentDate = datePart(date);
+    if (!$.isArray(dates)) dates = [dates];
+
+    for (i = 0; i < dates.length; i++) {
+      date = dates[i];
+
+      if (typeof date === 'string') {
+        date = parseDate(this.options.dateFormat, date, this.options);
+      }
+
+      this.selectedDates.push(date);
+      if (this.options.selectionMode === 'single') break;
+    }
+
+    this.currentDate = datePart(this.selectedDates.get(0));
     this.render();
-    this.val(this.selectedDates[0]);
+    this.val(this.selectedDates.get());
   };
 
   Datepicker.prototype.setOptions = function(options) {
@@ -348,7 +459,7 @@
         if (this.options.keyboard) {
           e.preventDefault();
 
-          if (!this.activeDate) this.activeDate = createDate(this.selectedDates[0]);
+          if (!this.activeDate) this.activeDate = createDate(this.selectedDates.get(-1));
           selectDate.call(this, this.activeDate);
         }
         break;
@@ -356,7 +467,7 @@
 
     if (this.options.keyboard && change) {
       e.preventDefault();
-      if (!this.activeDate) this.activeDate = createDate(this.selectedDates[0]);
+      if (!this.activeDate) this.activeDate = createDate(this.selectedDates.get(-1));
 
       var minDate = dateFromOption(this.options.minDate, this.options);
       var maxDate = dateFromOption(this.options.maxDate, this.options);
@@ -396,9 +507,9 @@
 
   var selectDate = function(date) {
     if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
-      this.selectedDates = [createDate(date)];
-      this.activeDate = null;
-      this.val(this.selectedDates[0]);
+      this.selectedDates.push(date);
+      this.activeDate = createDate(date);
+      this.val(this.selectedDates.get());
       this.render();
     }
 
@@ -520,7 +631,7 @@
 
         if (!isCellSelectable) classes.push('disabled');
         if (today - day === 0) classes.push('today');
-        if (this.selectedDates[0] - day === 0) classes.push('selected');
+        if (this.selectedDates.contains(day) !== -1) classes.push('selected');
         if (this.activeDate && this.activeDate - day === 0) classes.push('active');
         if (day.getDay() === 0) classes.push('sunday');
         if (day.getDay() === 6) classes.push('saturday');
@@ -549,7 +660,7 @@
   // ============================
 
   $.fn.datepicker = function(option, val) {
-    if (option === 'getDate') {
+    if (option === 'getDates') {
       var $this = $(this[0]);
       $this.datepicker();
       var data = $this.data('datepicker.instance');
