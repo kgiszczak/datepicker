@@ -22,7 +22,8 @@
     maxDate: null,
     keyboard: true,
     selectionMode: 'single',
-    separator: ', '
+    separator: ', ',
+    inline: false
   };
 
   var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
@@ -336,21 +337,31 @@
     this.currentDate = createDate(this.selectedDates.get(0));
 
     this.$container = $(this.options.container);
-    this.$input = $(INPUT_TEMPLATE);
-
-    this.$element
-      .on(this.isInput ? 'focus' : 'click', $.proxy(this.show, this))
-      .on('keydown', $.proxy(keydown, this));
-    this.$input.find('input').on('keydown', $.proxy(keydown, this));
 
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
       .on('click', 'a.prev-link, a.next-link', $.proxy(changeMonth, this))
       .on('click', 'table a', $.proxy(select, this))
       .on('keydown', $.proxy(keydown, this));
+
+    if (this.options.inline) {
+      this.$container.addClass('datepicker-inline');
+      this.render();
+      this.$element.append(this.$container);
+    } else {
+      this.$input = $(INPUT_TEMPLATE);
+
+      this.$input.find('input').on('keydown', $.proxy(keydown, this));
+
+      this.$container.addClass('datepicker-popup');
+      this.$element
+        .on(this.isInput ? 'focus' : 'click', $.proxy(this.show, this))
+        .on('keydown', $.proxy(keydown, this));
+    }
   };
 
   Datepicker.prototype.show = function(e) {
+    if (this.options.inline) return;
     if (e) e.preventDefault();
 
     if (triggerEvent.call(this, 'show.datepicker')) return;
@@ -374,6 +385,7 @@
   };
 
   Datepicker.prototype.hide = function() {
+    if (this.options.inline) return;
     if (triggerEvent.call(this, 'hide.datepicker')) return;
 
     this.$container.removeClass('in');
@@ -386,6 +398,8 @@
   };
 
   Datepicker.prototype.val = function(val) {
+    if (this.options.inline) return;
+
     var formattedDates = [], i, out;
 
     for (i = 0; i < val.length; i++) {
