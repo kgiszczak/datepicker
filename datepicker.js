@@ -18,6 +18,7 @@
     prevText: '&laquo;',
     nextText: '&raquo;',
     dayFormat: 'd',
+    rowsCount: 'auto',
     minDate: null,
     maxDate: null,
     keyboard: true,
@@ -595,6 +596,8 @@
         firstDayOffset  = (new Date(year, month, 1)).getDay() - this.options.firstDay,
         offsetDaysCount = firstDayOffset + daysCount,
         rows            = Math.ceil(offsetDaysCount / 7);
+
+    if (this.options.rowsCount === 'static') rows = 6;
 
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
