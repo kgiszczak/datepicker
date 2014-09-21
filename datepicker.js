@@ -609,6 +609,8 @@
 
     var output = '';
 
+    output += '<div class="datepicker-calendar">';
+
     output += '<div class="datepicker-header">';
     output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
     output += this.options.prevText;
@@ -684,6 +686,8 @@
 
     output += '</tbody>';
     output += '</table>';
+
+    output += '</div>';
 
     return output;
   };
