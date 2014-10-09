@@ -18,6 +18,7 @@
     prevText: '&laquo;',
     nextText: '&raquo;',
     dayFormat: 'd',
+    monthFormat: 'M',
     rowsCount: 'auto',
     minDate: null,
     maxDate: null,
@@ -29,6 +30,8 @@
 
   var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
     '<input type="text"></div>';
+
+  var dataDateFormat = '\\data-\\date="yy-m-d"';
 
   var regextOneOrTwoDigit = /\d\d?/;
   var regexTwoDigit = /\d\d/;
@@ -306,6 +309,7 @@
 
     this.$element = $(element);
     this.options  = $.extend({}, DEFAULTS, options);
+    this.view     = 'month';
 
     this.isInput = this.$element.is('input');
 
@@ -342,6 +346,7 @@
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
       .on('click', 'a.prev-link, a.next-link', $.proxy(changePeriod, this))
+      .on('click', 'a[data-view]', $.proxy(changeView, this))
       .on('click', 'table a', $.proxy(select, this))
       .on('keydown', $.proxy(keydown, this));
 
@@ -369,6 +374,7 @@
 
     this.currentDate = createDate(this.selectedDates.get(0));
     this.activeDate = null;
+    this.view = 'month';
 
     this.render();
     $(document.body).append(this.$container);
@@ -395,7 +401,11 @@
   };
 
   Datepicker.prototype.render = function() {
-    this.$container.html(renderCalendar.call(this));
+    if (this.view === 'month') {
+      this.$container.html(renderMonth.call(this));
+    } else {
+      this.$container.html(renderYear.call(this));
+    }
   };
 
   Datepicker.prototype.val = function(val) {
@@ -463,6 +473,7 @@
   // =======================================
 
   var keydown = function(e) {
+    if (this.view !== 'month') return;
     if (e.which === 9 || e.which === 27) this.hide();
 
     var change = null;
@@ -515,8 +526,19 @@
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    if (!triggerEvent.call(this, 'changePeriod.datepicker', {date: date})) {
+    if (!triggerEvent.call(this, 'changePeriod.datepicker', {date: date, period: this.view})) {
       this.currentDate = date;
+      this.render();
+    }
+  };
+
+  var changeView = function(e) {
+    e.preventDefault();
+
+    var view = $(e.target).data('view');
+
+    if (!triggerEvent.call(this, 'changeView.datepicker', {prevView: this.view, view: view})) {
+      this.view = view;
       this.render();
     }
   };
@@ -531,17 +553,25 @@
   };
 
   var selectDate = function(date) {
-    if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
-      this.selectedDates.push(date);
-      this.activeDate = createDate(date);
-      this.val(this.selectedDates.get());
-      this.render();
-    }
+    if (this.view === 'month') {
+      if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
+        this.selectedDates.push(date);
+        this.activeDate = createDate(date);
+        this.val(this.selectedDates.get());
+        this.render();
+      }
 
-    var rangeSelection = this.options.selectionMode === 'range';
-    if ((rangeSelection && this.selectedDates.get().length === 2 || !rangeSelection) &&
-        !triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
-      this.hide();
+      var rangeSelection = this.options.selectionMode === 'range';
+      if ((rangeSelection && this.selectedDates.get().length === 2 || !rangeSelection) &&
+          !triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
+        this.hide();
+      }
+    } else {
+      if (!triggerEvent.call(this, 'changeView.datepicker', {prevView: this.view, view: 'month'})) {
+        this.currentDate = date;
+        this.view = 'month';
+        this.render();
+      }
     }
   };
 
@@ -583,7 +613,77 @@
     this.$container.css({left: left, top: top});
   };
 
-  var renderCalendar = function() {
+  var renderYear = function() {
+    var i, j, classes, isCellSelectable;
+
+    var year = this.currentDate.getFullYear(),
+        month = this.currentDate.getMonth(),
+        prevDate = new Date(year - 1, 0, 1),
+        nextDate = new Date(year + 1, 0, 1);
+
+    var minDate = dateFromOption(this.options.minDate, this.options);
+    var maxDate = dateFromOption(this.options.maxDate, this.options);
+
+    minDate && minDate.setDate(1);
+    maxDate && maxDate.setDate(1);
+
+    var prevDisabled = minDate && minDate > prevDate,
+        nextDisabled = maxDate && maxDate < nextDate;
+
+    var output = '';
+
+    output += '<div class="datepicker-months">';
+
+    output += '<div class="datepicker-header">';
+    output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
+    output += this.options.prevText;
+    output += '</' + (prevDisabled ? 'span' : 'a') + '>';
+    output += '<span class="datepicker-title">' + formatDate('yy', this.currentDate, this.options) + '</span>';
+    output += '<' + (nextDisabled ? 'span' : 'a') + ' class="next-link"' + formatDate(dataDateFormat, nextDate) + '>';
+    output += this.options.nextText;
+    output += '</' + (nextDisabled ? 'span' : 'a') + '>';
+    output += '</div>';
+
+    output += '<table>';
+    output += '<tbody>';
+
+    var date = new Date(year, month, 1);
+
+    for (i = 0; i < 4; i++) {
+      output += '<tr>';
+
+      for (j = 0; j < 3; j++) {
+        date.setMonth(i * 3 + j);
+
+        classes = [];
+        isCellSelectable = true;
+
+        if (minDate && minDate > date) isCellSelectable = false;
+        if (maxDate && maxDate < date) isCellSelectable = false;
+
+        if (!isCellSelectable) classes.push('disabled');
+
+        output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
+        output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
+
+        output += formatDate(this.options.monthFormat, date, this.options);
+
+        output += isCellSelectable ? '</a>' : '</span>';
+        output += '</td>';
+      }
+
+      output += '</tr>';
+    }
+
+    output += '</tbody>';
+    output += '</table>';
+
+    output += '</div>';
+
+    return output;
+  };
+
+  var renderMonth = function() {
     var i, j, classes, isCellSelectable;
 
     var today           = createDate(),
@@ -602,8 +702,6 @@
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
 
-    var dataDateFormat = '\\data-\\date="yy-m-d"';
-
     var prevDisabled = minDate && minDate > prevDate,
         nextDisabled = maxDate && maxDate < nextDate;
 
@@ -615,7 +713,7 @@
     output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
     output += this.options.prevText;
     output += '</' + (prevDisabled ? 'span' : 'a') + '>';
-    output += '<span class="datepicker-title">' + formatDate('MM yy', this.currentDate, this.options) + '</span>';
+    output += '<a class="datepicker-title" data-view="year">' + formatDate('MM yy', this.currentDate, this.options) + '</a>';
     output += '<' + (nextDisabled ? 'span' : 'a') + ' class="next-link"' + formatDate(dataDateFormat, nextDate) + '>';
     output += this.options.nextText;
     output += '</' + (nextDisabled ? 'span' : 'a') + '>';
