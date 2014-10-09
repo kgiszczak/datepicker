@@ -341,7 +341,7 @@
 
     this.$container
       .on('click', function(e) { e.stopPropagation(); })
-      .on('click', 'a.prev-link, a.next-link', $.proxy(changeMonth, this))
+      .on('click', 'a.prev-link, a.next-link', $.proxy(changePeriod, this))
       .on('click', 'table a', $.proxy(select, this))
       .on('keydown', $.proxy(keydown, this));
 
@@ -509,13 +509,13 @@
     }
   };
 
-  var changeMonth = function(e) {
+  var changePeriod = function(e) {
     e.preventDefault();
 
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
-    if (!triggerEvent.call(this, 'changeMonth.datepicker', {date: date})) {
+    if (!triggerEvent.call(this, 'changePeriod.datepicker', {date: date})) {
       this.currentDate = date;
       this.render();
     }
