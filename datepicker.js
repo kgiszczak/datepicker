@@ -538,7 +538,7 @@
       this.render();
     }
 
-    var rangeSelection = this.options.selectionMode === 'range'
+    var rangeSelection = this.options.selectionMode === 'range';
     if ((rangeSelection && this.selectedDates.get().length === 2 || !rangeSelection) &&
         !triggerEvent.call(this, 'selectedDate.datepicker', {dates: this.selectedDates.get()})) {
       this.hide();
