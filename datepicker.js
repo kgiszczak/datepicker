@@ -187,10 +187,10 @@
           dateObject.year = +matched;
           break;
         case 'M':
-          dateObject.month = options.monthsShort.findIndex(function(el) { return el === matched; });
+          dateObject.month = findIndex(options.monthsShort, function(el) { return el === matched; });
           break;
         case 'MM':
-          dateObject.month = options.months.findIndex(function(el) { return el === matched; });
+          dateObject.month = findIndex(options.months, function(el) { return el === matched; });
           break;
         case '@':
           dateObject.epoch = +matched;
@@ -250,6 +250,14 @@
     }
 
     return parts;
+  }
+
+  function findIndex(list, predicate) {
+    for (var i = 0; i < list.length; i++) {
+      if (predicate(list[i])) return i;
+    }
+
+    return -1;
   }
 
   // DATESELECTION CLASS DEFINITION
