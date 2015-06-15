@@ -446,6 +446,8 @@
 
       $(this.options.altField).val(formattedDates.join(this.options.separator));
     }
+
+    triggerEvent.call(this, 'valSet.datepicker', {dates: val, formattedDates: out});
   };
 
   Datepicker.prototype.getDates = function() {
