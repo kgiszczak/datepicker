@@ -28,7 +28,7 @@
     inline: false
   };
 
-  var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: -1000px; top: -1000px;">' +
+  var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: 50%; top: 50%;">' +
     '<input type="text"></div>';
 
   var dataDateFormat = '\\data-\\date="yy-m-d"';
