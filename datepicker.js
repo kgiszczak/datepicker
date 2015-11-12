@@ -837,7 +837,7 @@
 
   $(document).on('click', function(e) {
     $('[data-datepicker-instance]').each(function() {
-      if (this !== e.target) $(this).datepicker('hide');
+      if (this !== e.target && !this.contains(e.target)) $(this).datepicker('hide');
     });
   });
 
