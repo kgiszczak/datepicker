@@ -679,19 +679,25 @@
     output += '<table>';
     output += '<tbody>';
 
-    var date = new Date(year, 0, 1);
+    var startDate = new Date(year, 0, 1),
+        date = new Date(year - 1, 0, 1);
 
     for (i = 0; i < 4; i++) {
       output += '<tr>';
 
       for (j = 0; j < 3; j++) {
-        if (i * 3 + j === 9 || i * 3 + j === 11) {
-          output += '<td></td>';
-          continue;
-        }
-
         classes = [];
         isCellSelectable = true;
+
+        if (date < startDate) {
+          classes.push('prev-month');
+          isCellSelectable = this.options.selectOtherMonths;
+        }
+
+        if (date >= nextDate) {
+          classes.push('next-month');
+          isCellSelectable = this.options.selectOtherMonths;
+        }
 
         if (minDate && minDate > date) isCellSelectable = false;
         if (maxDate && maxDate < date) isCellSelectable = false;
