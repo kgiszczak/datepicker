@@ -578,6 +578,7 @@
       if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
         this.selectedDates.push(date);
         this.activeDate = createDate(date);
+        this.currentDate = createDate(date);
         this.val(this.selectedDates.get());
         this.render();
       }
