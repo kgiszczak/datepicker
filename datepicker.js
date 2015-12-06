@@ -637,8 +637,8 @@
     minDate && minDate.setDate(1);
     maxDate && maxDate.setDate(1);
 
-    var prevDisabled = minDate && minDate > prevDate,
-        nextDisabled = maxDate && maxDate < nextDate;
+    var prevDisabled = minDate && minDate.getFullYear() > prevDate.getFullYear(),
+        nextDisabled = maxDate && maxDate.getFullYear() < nextDate.getFullYear();
 
     var output = '';
 
