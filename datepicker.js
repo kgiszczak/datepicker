@@ -418,6 +418,15 @@
     }
   };
 
+  Datepicker.prototype.changeView = function(view) {
+    if (view !== 'decade' && view !== 'year' && view !== 'month') {
+      throw 'Invalid view name';
+    }
+
+    this.view = view;
+    this.render();
+  };
+
   Datepicker.prototype.val = function(val) {
     if (this.options.inline) return;
 
