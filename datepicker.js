@@ -411,8 +411,10 @@
   Datepicker.prototype.render = function() {
     if (this.view === 'month') {
       this.$container.html(renderMonth.call(this));
-    } else {
+    } else if (this.view === 'year') {
       this.$container.html(renderYear.call(this));
+    } else {
+      this.$container.html(renderDecade.call(this));
     }
   };
 
@@ -577,9 +579,14 @@
         this.hide();
       }
     } else {
-      if (!triggerEvent.call(this, 'changeView.datepicker', {prevView: this.view, view: 'month'})) {
+      var view;
+
+      if (this.view === 'decade') view = 'year';
+      if (this.view === 'year') view = 'month';
+
+      if (!triggerEvent.call(this, 'changeView.datepicker', {prevView: this.view, view: view})) {
         this.currentDate = date;
-        this.view = 'month';
+        this.view = view;
         this.render();
       }
     }
@@ -623,6 +630,82 @@
     this.$container.css({left: left, top: top});
   };
 
+  var renderDecade = function() {
+    var i, j, classes, isCellSelectable;
+
+    var thisYear = this.currentDate.getFullYear(),
+        year = thisYear - thisYear % 10,
+        prevDate = new Date(year - 10, 0, 1),
+        nextDate = new Date(year + 10, 0, 1);
+
+    var minDate = dateFromOption(this.options.minDate, this.options);
+    var maxDate = dateFromOption(this.options.maxDate, this.options);
+
+    minDate && minDate.setDate(1) && minDate.setMonth(0);
+    maxDate && maxDate.setDate(1) && maxDate.setMonth(0);
+
+    var prevDisabled = minDate && minDate.getFullYear() > new Date(year, 0, 1).getFullYear(),
+        nextDisabled = maxDate && maxDate.getFullYear() < nextDate.getFullYear();
+
+    var output = '';
+
+    output += '<div class="datepicker-years">';
+
+    output += '<div class="datepicker-header">';
+    output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
+    output += this.options.prevText;
+    output += '</' + (prevDisabled ? 'span' : 'a') + '>';
+    output += '<span class="datepicker-title">' + formatDate('yy', new Date(year, 0, 1), this.options);
+    output += ' - ' + formatDate('yy', new Date(year + 9, 0, 1), this.options) + '</span>';
+    output += '<' + (nextDisabled ? 'span' : 'a') + ' class="next-link"' + formatDate(dataDateFormat, nextDate) + '>';
+    output += this.options.nextText;
+    output += '</' + (nextDisabled ? 'span' : 'a') + '>';
+    output += '</div>';
+
+    output += '<table>';
+    output += '<tbody>';
+
+    var date = new Date(year, 0, 1);
+
+    for (i = 0; i < 4; i++) {
+      output += '<tr>';
+
+      for (j = 0; j < 3; j++) {
+        if (i * 3 + j === 9 || i * 3 + j === 11) {
+          output += '<td></td>';
+          continue;
+        }
+
+        classes = [];
+        isCellSelectable = true;
+
+        if (minDate && minDate > date) isCellSelectable = false;
+        if (maxDate && maxDate < date) isCellSelectable = false;
+
+        if (!isCellSelectable) classes.push('disabled');
+
+        output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
+        output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
+
+        output += formatDate('yy', date, this.options);
+
+        output += isCellSelectable ? '</a>' : '</span>';
+        output += '</td>';
+
+        date.setFullYear(date.getFullYear() + 1);
+      }
+
+      output += '</tr>';
+    }
+
+    output += '</tbody>';
+    output += '</table>';
+
+    output += '</div>';
+
+    return output;
+  };
+
   var renderYear = function() {
     var i, j, classes, isCellSelectable;
 
@@ -648,7 +731,7 @@
     output += '<' + (prevDisabled ? 'span' : 'a') + ' class="prev-link"' + formatDate(dataDateFormat, prevDate) + '>';
     output += this.options.prevText;
     output += '</' + (prevDisabled ? 'span' : 'a') + '>';
-    output += '<span class="datepicker-title">' + formatDate('yy', this.currentDate, this.options) + '</span>';
+    output += '<a class="datepicker-title" data-view="decade">' + formatDate('yy', this.currentDate, this.options) + '</a>';
     output += '<' + (nextDisabled ? 'span' : 'a') + ' class="next-link"' + formatDate(dataDateFormat, nextDate) + '>';
     output += this.options.nextText;
     output += '</' + (nextDisabled ? 'span' : 'a') + '>';
