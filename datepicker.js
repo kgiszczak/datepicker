@@ -633,10 +633,14 @@
   var renderDecade = function() {
     var i, j, classes, isCellSelectable;
 
-    var thisYear = this.currentDate.getFullYear(),
+    var today = createDate(),
+        thisYear = this.currentDate.getFullYear(),
         year = thisYear - thisYear % 10,
         prevDate = new Date(year - 10, 0, 1),
         nextDate = new Date(year + 10, 0, 1);
+
+    today.setMonth(0);
+    today.setDate(1);
 
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
@@ -683,6 +687,7 @@
         if (maxDate && maxDate < date) isCellSelectable = false;
 
         if (!isCellSelectable) classes.push('disabled');
+        if (today - date === 0) classes.push('today');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
@@ -711,8 +716,11 @@
 
     var year = this.currentDate.getFullYear(),
         month = this.currentDate.getMonth(),
+        today = createDate(),
         prevDate = new Date(year - 1, 0, 1),
         nextDate = new Date(year + 1, 0, 1);
+
+    today.setDate(1);
 
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
@@ -755,6 +763,7 @@
         if (maxDate && maxDate < date) isCellSelectable = false;
 
         if (!isCellSelectable) classes.push('disabled');
+        if (today - date === 0) classes.push('today');
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
