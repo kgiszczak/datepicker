@@ -682,6 +682,14 @@
     var startDate = new Date(year, 0, 1),
         date = new Date(year - 1, 0, 1);
 
+    var contains = function(selection, date) {
+      var i, year = date.getFullYear();
+
+      for (i = 0; i < selection.length; i++) {
+        if (selection[i].getFullYear() === year) return true;
+      }
+    };
+
     for (i = 0; i < 4; i++) {
       output += '<tr>';
 
@@ -704,6 +712,10 @@
 
         if (!isCellSelectable) classes.push('disabled');
         if (today - date === 0) classes.push('today');
+        if (contains(this.selectedDates.dates, date)) classes.push('selected');
+        if (this.options.selectionMode === 'range' && this.selectedDates.inRange(date)) {
+          classes.push('range');
+        }
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
@@ -766,6 +778,15 @@
 
     var date = new Date(year, month, 1);
 
+    var contains = function(selection, date) {
+      var i, el, year = date.getFullYear(), month = date.getMonth();
+
+      for (i = 0; i < selection.length; i++) {
+        el = selection[i];
+        if (el.getFullYear() === year && el.getMonth() === month) return true;
+      }
+    };
+
     for (i = 0; i < 4; i++) {
       output += '<tr>';
 
@@ -780,6 +801,10 @@
 
         if (!isCellSelectable) classes.push('disabled');
         if (today - date === 0) classes.push('today');
+        if (contains(this.selectedDates.dates, date)) classes.push('selected');
+        if (this.options.selectionMode === 'range' && this.selectedDates.inRange(date)) {
+          classes.push('range');
+        }
 
         output += '<td' + (classes.length > 0 ? ' class="' + classes.join(' ') + '"' : '') + '>';
         output += isCellSelectable ? '<a ' + formatDate(dataDateFormat, date) + '>' : '<span>';
