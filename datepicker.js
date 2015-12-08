@@ -23,9 +23,16 @@
     minDate: null,
     maxDate: null,
     keyboard: true,
+    selection: 'day',
     selectionMode: 'single',
     separator: ', ',
     inline: false
+  };
+
+  var SELECTION_VIEWS = {
+    day: 'month',
+    month: 'year',
+    year: 'decade'
   };
 
   var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: 50%; top: 50%;">' +
@@ -217,7 +224,7 @@
     if (dateObject.epoch) {
       return new Date(dateObject.epoch);
     } else {
-      return new Date(dateObject.year, dateObject.month, dateObject.day);
+      return new Date(dateObject.year, dateObject.month || 0, dateObject.day || 1);
     }
   }
 
@@ -317,7 +324,7 @@
 
     this.$element = $(element);
     this.options  = $.extend({}, DEFAULTS, options);
-    this.view     = 'month';
+    this.view     = SELECTION_VIEWS[this.options.selection];
 
     this.isInput = this.$element.is('input');
 
@@ -382,7 +389,7 @@
 
     this.currentDate = createDate(this.selectedDates.get(0));
     this.activeDate = null;
-    this.view = 'month';
+    this.view = SELECTION_VIEWS[this.options.selection];
 
     this.render();
     $(document.body).append(this.$container);
@@ -574,7 +581,7 @@
   };
 
   var selectDate = function(date) {
-    if (this.view === 'month') {
+    if (this.view === SELECTION_VIEWS[this.options.selection]) {
       if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
         this.selectedDates.push(date);
         this.activeDate = createDate(date);
