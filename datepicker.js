@@ -18,6 +18,7 @@
     prevText: '&laquo;',
     nextText: '&raquo;',
     dayFormat: 'd',
+    dayHeaderFormat: 'M',
     monthFormat: 'M',
     rowsCount: 'auto',
     minDate: null,
@@ -876,7 +877,11 @@
 
     for (i = 0; i < 7; i++) {
       output += '<th>';
-      output += this.options.daysMin[(i + this.options.firstDay) % 7];
+      if (this.options.dayHeaderFormat === 'S') {
+        output += this.options.daysShort[(i + this.options.firstDay) % 7];
+      } else {
+        output += this.options.daysMin[(i + this.options.firstDay) % 7];
+      }
       output += '</th>';
     }
 
