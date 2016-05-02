@@ -399,6 +399,8 @@
       this.$input.find('input').focus();
     }
 
+    this.$container.addClass('datepicker-align-' + this.options.align);
+
     var self = this;
     setTimeout(function() {
       self.$container.addClass('in');
