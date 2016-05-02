@@ -846,8 +846,11 @@
         nextDate        = new Date(year, month + 1, 1),
         daysCount       = 32 - (new Date(year, month, 32)).getDate(),
         prevDaysCount   = 32 - (new Date(year, month - 1, 32)).getDate(),
-        firstDayOffset  = (new Date(year, month, 1)).getDay() - this.options.firstDay,
-        offsetDaysCount = firstDayOffset + daysCount,
+        firstDayOffset  = (new Date(year, month, 1)).getDay() - this.options.firstDay;
+
+    if (firstDayOffset < 0) firstDayOffset += 7;
+
+    var offsetDaysCount = firstDayOffset + daysCount,
         rows            = Math.ceil(offsetDaysCount / 7);
 
     if (this.options.rowsCount === 'static') rows = 6;
