@@ -1,0 +1,29 @@
+{
+  "name": "datepicker",
+  "version": "0.0.1",
+  "description": "Datepicker jQuery plugin",
+  "main": "datepicker.js",
+  "dependencies": {
+    "jquery": "^2.2.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3",
+    "jshint": "^2.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kgiszczak/datepicker.git"
+  },
+  "author": "Kamil Giszczak <beerkg@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kgiszczak/datepicker"
+  },
+  "homepage": "https://github.com/kgiszczak/datepicker#readme"
+}
