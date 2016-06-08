@@ -1,16 +1,13 @@
 {
-  "asi" : true,
-  "browser" : true,
-  "eqeqeq" : false,
-  "eqnull" : true,
-  "es3" : true,
-  "expr" : true,
-  "jquery" : true,
-  "latedef" : true,
-  "laxbreak" : true,
-  "nonbsp" : true,
-  "strict" : true,
-  "undef" : true,
-  "unused" : true
+  "asi": true,
+  "browser": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "jquery": true,
+  "latedef": "nofunc",
+  "strict": true,
+  "noarg": true,
+  "undef": true,
+  "unused": true,
+  "validthis": true
 }
-

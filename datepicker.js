@@ -503,7 +503,7 @@
   // DATEPICKER PRIVATE FUNCTIONS DEFINITION
   // =======================================
 
-  var keydown = function(e) {
+  function keydown(e) {
     if (this.view !== 'month') return;
     if (e.which === 9 || e.which === 27) this.hide();
 
@@ -549,9 +549,9 @@
       this.currentDate = createDate(this.activeDate);
       this.render();
     }
-  };
+  }
 
-  var changePeriod = function(e) {
+  function changePeriod(e) {
     e.preventDefault();
 
     var dateString = $(e.target).data('date');
@@ -561,9 +561,9 @@
       this.currentDate = date;
       this.render();
     }
-  };
+  }
 
-  var changeView = function(e) {
+  function changeView(e) {
     e.preventDefault();
 
     var view = $(e.target).data('view');
@@ -572,18 +572,18 @@
       this.view = view;
       this.render();
     }
-  };
+  }
 
-  var select = function(e) {
+  function select(e) {
     e.preventDefault();
 
     var dateString = $(e.target).data('date');
     var date = parseDate('yy-m-d', dateString, this.options);
 
     selectDate.call(this, date);
-  };
+  }
 
-  var selectDate = function(date) {
+  function selectDate(date) {
     if (this.view === SELECTION_VIEWS[this.options.selection]) {
       if (!triggerEvent.call(this, 'selectDate.datepicker', {date: date})) {
         this.selectedDates.push(date);
@@ -610,20 +610,20 @@
         this.render();
       }
     }
-  };
+  }
 
-  var triggerEvent = function(name, params) {
+  function triggerEvent(name, params) {
     var e = $.Event(name, params);
     this.$element.trigger(e);
     return e.isDefaultPrevented();
-  };
+  }
 
   // available options:
   // bottom-left, bottom-center, bottom-right
   // top-left, top-center, top-right
   // left-top left-bottom left-middle
   // right-top right-bottom right-middle
-  var positionContainer = function() {
+  function positionContainer() {
     var cWidth = this.$container.outerWidth();
     var cHeight = this.$container.outerHeight();
 
@@ -648,9 +648,9 @@
     if (align[1] === 'middle') top -= cHeight / 2 - height / 2;
 
     this.$container.css({left: left, top: top});
-  };
+  }
 
-  var renderDecade = function() {
+  function renderDecade() {
     var i, j, classes, isCellSelectable;
 
     var today = createDate(),
@@ -665,8 +665,8 @@
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
 
-    minDate && minDate.setDate(1) && minDate.setMonth(0);
-    maxDate && maxDate.setDate(1) && maxDate.setMonth(0);
+    if (minDate) { minDate.setDate(1); minDate.setMonth(0); }
+    if (maxDate) { maxDate.setDate(1); maxDate.setMonth(0); }
 
     var prevDisabled = minDate && minDate.getFullYear() > new Date(year, 0, 1).getFullYear(),
         nextDisabled = maxDate && maxDate.getFullYear() < nextDate.getFullYear();
@@ -747,9 +747,9 @@
     output += '</div>';
 
     return output;
-  };
+  }
 
-  var renderYear = function() {
+  function renderYear() {
     var i, j, classes, isCellSelectable;
 
     var year = this.currentDate.getFullYear(),
@@ -763,8 +763,8 @@
     var minDate = dateFromOption(this.options.minDate, this.options);
     var maxDate = dateFromOption(this.options.maxDate, this.options);
 
-    minDate && minDate.setDate(1);
-    maxDate && maxDate.setDate(1);
+    if (minDate) { minDate.setDate(1); }
+    if (maxDate) { maxDate.setDate(1); }
 
     var prevDisabled = minDate && minDate.getFullYear() > prevDate.getFullYear(),
         nextDisabled = maxDate && maxDate.getFullYear() < nextDate.getFullYear();
@@ -834,9 +834,9 @@
     output += '</div>';
 
     return output;
-  };
+  }
 
-  var renderMonth = function() {
+  function renderMonth() {
     var i, j, classes, isCellSelectable;
 
     var today           = createDate(),
@@ -948,7 +948,7 @@
     output += '</div>';
 
     return output;
-  };
+  }
 
   // DATEPICKER PLUGIN DEFINITION
   // ============================
