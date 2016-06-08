@@ -22,12 +22,22 @@
   opacity: 1;
 }
 
+.datepicker-inline {
+  width: 250px;
+  border: 1px solid #468DE4;
+  border-radius: 2px 2px 0 0;
+}
+
 .datepicker-header {
   display: flex;
   font-size: 14px;
   border-radius: 2px 2px 0 0;
   background: #468DE4;
   color: #fff;
+}
+
+.datepicker-inline .datepicker-header {
+  border-radius: 0;
 }
 
 .datepicker-header .datepicker-title {
