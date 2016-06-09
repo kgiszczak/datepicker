@@ -36,7 +36,7 @@
     year: 'decade'
   };
 
-  var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: absolute; left: 50%; top: 50%;">' +
+  var INPUT_TEMPLATE = '<div style="width: 0; height: 0; overflow: hidden; position: fixed; left: 0; top: 0;">' +
     '<input type="text"></div>';
 
   var dataDateFormat = '\\data-\\date="yy-m-d"';
