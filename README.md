@@ -2,6 +2,8 @@
 
 This is yet another datepicker plugin.
 
+Demo and documentation is available at [http://kgiszczak.github.io/datepicker](http://kgiszczak.github.io/datepicker)
+
 ## Installation
 
 jQuery is required for this plugin to work. In your HTML file, load css and js simply by:
